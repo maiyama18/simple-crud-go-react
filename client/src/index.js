@@ -11,7 +11,10 @@ const render = () => {
   )
 }
 
-store.subscribe(() => render())
+store.subscribe(() => {
+  console.log(store.getState())
+  render()
+})
 render()
 
 serviceWorker.register();

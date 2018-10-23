@@ -1,12 +1,29 @@
 import React from 'react'
-import { changeName } from '../modules/form';
+import axios from 'axios'
+import { changeName, changeAge, initializeForm } from '../modules/form';
 
 export default ({ store }) => {
   const { name, age } = store.getState().form
 
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    try {
+      console.log(name, age)
+      const res = await axios.post('/characters', {
+        name,
+        age,
+      })
+      console.log(res.data)
+    } catch (err) {
+      console.error(err)
+    }
+    store.dispatch(initializeForm())
+  }
+
   return (
     <div>
-      <form>
+      <form onSubmit={e => handleSubmit(e)}>
         <input
           type="text"
           placeholder="name"

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -11,9 +12,9 @@ import (
 )
 
 type Character struct {
-	ID        uint      `json:"id" gorm:"AUTO_INCREMENT"`
+	ID        int       `json:"id" gorm:"AUTO_INCREMENT"`
 	Name      string    `json:"name"`
-	Age       uint      `json:"age"`
+	Age       int       `json:"age,string"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -47,8 +48,11 @@ func main() {
 
 	router.POST("/characters", func(ctx *gin.Context) {
 		var character Character
+
+		fmt.Println("ok")
 		if err := ctx.ShouldBind(&character); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			fmt.Println(err)
 			return
 		}
 		db.Create(&character)
