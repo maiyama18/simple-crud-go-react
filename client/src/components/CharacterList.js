@@ -1,19 +1,19 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import { requestCharacters, requestCharactersSuccess, requestCharactersFailed, updateCharacter, deleteCharacter } from '../modules/characters';
+import { request, setCharacters, requestFinished, updateCharacter, deleteCharacter } from '../modules/characters';
 
 class CharacterList extends Component {
   async componentDidMount() {
     const { store } = this.props
 
-    store.dispatch(requestCharacters())
+    store.dispatch(request())
     try {
       const res = await axios.get('/characters')
-      store.dispatch(requestCharactersSuccess(res.data))
+      store.dispatch(setCharacters(res.data))
     } catch (err) {
-      store.dispatch(requestCharactersFailed())
       console.error(err)
     }
+    store.dispatch(requestFinished())
   }
 
   async handleIncrement(id) {
@@ -22,18 +22,31 @@ class CharacterList extends Component {
 
     const character = characters.find(c => c.id === id)
     const { name, age } = character
-    const res = await axios.put(`/characters/${id}`, {
-      name,
-      age: parseInt(age, 10) + 1,
-    })
-    store.dispatch(updateCharacter(res.data))
+
+    store.dispatch(request())
+    try {
+      const res = await axios.put(`/characters/${id}`, {
+        name,
+        age: parseInt(age, 10) + 1,
+      })
+      store.dispatch(updateCharacter(res.data))
+    } catch (err) {
+      console.error(err)
+    }
+    store.dispatch(requestFinished())
   }
 
   async handleDelete(id) {
     const { store } = this.props
 
-    await axios.delete(`/characters/${id}`)
-    store.dispatch(deleteCharacter(id))
+    store.dispatch(request())
+    try {
+      await axios.delete(`/characters/${id}`)
+      store.dispatch(deleteCharacter(id))
+    } catch (err) {
+      console.error(err)
+    }
+    store.dispatch(requestFinished())
   }
 
   render() {

@@ -3,24 +3,24 @@ const initialState = {
   characters: [],
 }
 
-const REQUEST_CHARACTERS = 'REQUEST_CHARACTERS'
-const REQUEST_CHARACTERS_SUCCESS = 'REQUEST_CHARACTERS_SUCCESS'
-const REQUEST_CHARACTERS_FAILED = 'REQUEST_CHARACTERS_FAILED'
+const REQUEST = 'REQUEST'
+const REQUEST_FINISHED = 'REQUEST_FINISHED'
+const SET_CHARACTERS = 'SET_CHARACTERS'
 const ADD_CHARACTER = 'ADD_CHARACTER'
 const UPDATE_CHARACTER = 'UPDATE_CHARACTER'
 const DELETE_CHARACTER = 'DELETE_CHARACTER'
 
-export const requestCharacters = () => ({
-  type: REQUEST_CHARACTERS,
+export const request = () => ({
+  type: REQUEST,
 })
 
-export const requestCharactersSuccess = characters => ({
-  type: REQUEST_CHARACTERS_SUCCESS,
+export const requestFinished = () => ({
+  type: REQUEST_FINISHED,
+})
+
+export const setCharacters = characters => ({
+  type: SET_CHARACTERS,
   characters,
-})
-
-export const requestCharactersFailed = () => ({
-  type: REQUEST_CHARACTERS_FAILED,
 })
 
 export const addCharacter = character => ({
@@ -40,18 +40,18 @@ export const deleteCharacter = id => ({
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case REQUEST_CHARACTERS:
+    case REQUEST:
       return {
         ...state,
         isFetching: true,
       }
-    case REQUEST_CHARACTERS_SUCCESS:
+    case SET_CHARACTERS:
       return {
         ...state,
         isFetching: false,
         characters: action.characters,
       }
-    case REQUEST_CHARACTERS_FAILED:
+    case REQUEST_FINISHED:
       return {
         ...state,
         isFetching: false,
