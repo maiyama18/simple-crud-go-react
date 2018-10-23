@@ -8,6 +8,7 @@ const REQUEST_CHARACTERS_SUCCESS = 'REQUEST_CHARACTERS_SUCCESS'
 const REQUEST_CHARACTERS_FAILED = 'REQUEST_CHARACTERS_FAILED'
 const ADD_CHARACTER = 'ADD_CHARACTER'
 const UPDATE_CHARACTER = 'UPDATE_CHARACTER'
+const DELETE_CHARACTER = 'DELETE_CHARACTER'
 
 export const requestCharacters = () => ({
   type: REQUEST_CHARACTERS,
@@ -30,6 +31,11 @@ export const addCharacter = character => ({
 export const updateCharacter = character => ({
   type: UPDATE_CHARACTER,
   character,
+})
+
+export const deleteCharacter = id => ({
+  type: DELETE_CHARACTER,
+  id,
 })
 
 export default (state = initialState, action) => {
@@ -62,6 +68,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         characters: state.characters.map(c => c.id === action.character.id ? action.character : c)
+      }
+    case DELETE_CHARACTER:
+      return {
+        ...state,
+        characters: state.characters.filter(c => c.id !== action.id)
       }
     default:
       return state

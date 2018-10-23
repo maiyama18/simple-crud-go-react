@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import { requestCharacters, requestCharactersSuccess, requestCharactersFailed, updateCharacter } from '../modules/characters';
+import { requestCharacters, requestCharactersSuccess, requestCharactersFailed, updateCharacter, deleteCharacter } from '../modules/characters';
 
 class CharacterList extends Component {
   async componentDidMount() {
@@ -29,6 +29,13 @@ class CharacterList extends Component {
     store.dispatch(updateCharacter(res.data))
   }
 
+  async handleDelete(id) {
+    const { store } = this.props
+
+    await axios.delete(`/characters/${id}`)
+    store.dispatch(deleteCharacter(id))
+  }
+
   render() {
     const { store } = this.props
     const { characters } = store.getState().character
@@ -40,6 +47,7 @@ class CharacterList extends Component {
             <li key={c.id}>
               {c.name} ({c.age})
               <button onClick={() => this.handleIncrement(c.id)}>+</button>
+              <button onClick={() => this.handleDelete(c.id)}>d</button>
             </li>
           ))}
         </ul>
