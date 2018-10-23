@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import { changeName, changeAge, initializeForm } from '../modules/form';
+import { addCharacter } from '../modules/characters';
 
 export default ({ store }) => {
   const { name, age } = store.getState().form
@@ -9,12 +10,11 @@ export default ({ store }) => {
     e.preventDefault()
 
     try {
-      console.log(name, age)
       const res = await axios.post('/characters', {
         name,
         age,
       })
-      console.log(res.data)
+      store.dispatch(addCharacter(res.data))
     } catch (err) {
       console.error(err)
     }
