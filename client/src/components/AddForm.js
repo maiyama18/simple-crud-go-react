@@ -12,7 +12,7 @@ export default ({ store }) => {
     try {
       const res = await axios.post('/characters', {
         name,
-        age,
+        age: parseInt(age, 10),
       })
       store.dispatch(addCharacter(res.data))
     } catch (err) {

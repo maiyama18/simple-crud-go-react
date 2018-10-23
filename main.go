@@ -14,7 +14,7 @@ import (
 type Character struct {
 	ID        int       `json:"id" gorm:"AUTO_INCREMENT"`
 	Name      string    `json:"name"`
-	Age       int       `json:"age,string"`
+	Age       int       `json:"age"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -64,10 +64,12 @@ func main() {
 		id := ctx.Param("id")
 		var character, updated Character
 		if err := db.Where("id = ?", id).First(&character).Error; err != nil {
+			fmt.Println(err)
 			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
 		if err := ctx.ShouldBind(&updated); err != nil {
+			fmt.Println(err)
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}

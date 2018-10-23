@@ -7,6 +7,7 @@ const REQUEST_CHARACTERS = 'REQUEST_CHARACTERS'
 const REQUEST_CHARACTERS_SUCCESS = 'REQUEST_CHARACTERS_SUCCESS'
 const REQUEST_CHARACTERS_FAILED = 'REQUEST_CHARACTERS_FAILED'
 const ADD_CHARACTER = 'ADD_CHARACTER'
+const UPDATE_CHARACTER = 'UPDATE_CHARACTER'
 
 export const requestCharacters = () => ({
   type: REQUEST_CHARACTERS,
@@ -23,6 +24,11 @@ export const requestCharactersFailed = () => ({
 
 export const addCharacter = character => ({
   type: ADD_CHARACTER,
+  character,
+})
+
+export const updateCharacter = character => ({
+  type: UPDATE_CHARACTER,
   character,
 })
 
@@ -51,6 +57,11 @@ export default (state = initialState, action) => {
           ...state.characters,
           action.character,
         ]
+      }
+    case UPDATE_CHARACTER:
+      return {
+        ...state,
+        characters: state.characters.map(c => c.id === action.character.id ? action.character : c)
       }
     default:
       return state
