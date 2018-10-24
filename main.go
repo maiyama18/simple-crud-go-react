@@ -17,6 +17,16 @@ type Character struct {
 	Age       int       `json:"age"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+
+	Company   Company `json:"company"`
+	CompanyID int     `json:"company_id"`
+}
+
+type Company struct {
+	ID   int    `json:"id" gorm:"AUTO_INCREMENT"`
+	Name string `json:"name"`
+
+	Characters []Character `json:"characters"`
 }
 
 func main() {
@@ -28,9 +38,24 @@ func main() {
 
 	router := gin.Default()
 
+	router.GET("/companies", func(ctx *gin.Context) {
+		var companies []Company
+		db.Preload("Characters").Find(&companies)
+
+		ctx.JSON(http.StatusOK, companies)
+	})
+
+	router.GET("/companies/:id", func(ctx *gin.Context) {
+		id := ctx.Param("id")
+		var company Company
+		db.First(&company, id).Related(&company.Characters)
+
+		ctx.JSON(http.StatusOK, company)
+	})
+
 	router.GET("/characters", func(ctx *gin.Context) {
 		var characters []Character
-		db.Find(&characters)
+		db.Preload("Company").Find(&characters)
 
 		ctx.JSON(http.StatusOK, characters)
 	})
@@ -38,7 +63,7 @@ func main() {
 	router.GET("/characters/:id", func(ctx *gin.Context) {
 		id := ctx.Param("id")
 		var character Character
-		if err := db.Where("id = ?", id).First(&character).Error; err != nil {
+		if err := db.First(&character, id).Related(&character.Company).Error; err != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
@@ -98,17 +123,21 @@ func initDb() (*gorm.DB, error) {
 	}
 
 	db.DropTableIfExists(&Character{})
+	db.DropTableIfExists(&Company{})
 	db.CreateTable(&Character{})
+	db.CreateTable(&Company{})
 	insertFixtures(db)
 
 	return db, nil
 }
 
 func insertFixtures(db *gorm.DB) {
+	musani := Company{ID: 1, Name: "musani"}
+	akaoni := Company{ID: 2, Name: "akaoni"}
 	characters := []Character{
-		Character{Name: "aoi", Age: 21},
-		Character{Name: "ema", Age: 21},
-		Character{Name: "shizuka", Age: 21},
+		Character{Name: "aoi", Age: 21, Company: musani},
+		Character{Name: "ema", Age: 21, Company: musani},
+		Character{Name: "shizuka", Age: 21, Company: akaoni},
 	}
 
 	for _, character := range characters {
